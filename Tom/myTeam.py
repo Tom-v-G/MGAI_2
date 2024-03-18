@@ -15,6 +15,8 @@
 from captureAgents import CaptureAgent
 import random, time, util
 from game import Directions
+from capture import GameState
+from Tom.MonteCarloTreeSearch import MDP, MCTS, TreeNode
 import game
 
 #################
@@ -99,12 +101,15 @@ class MCTSAgent(CaptureAgent):
   """
   A basic MCTS agent 
   """
+  # Class variable search tree
+  searchTree = None
 
   def __init__(self, index, timeForComputing=0.1):
     super().__init__(index, timeForComputing)  
-    self.searchTree = TreeNode()
+    
 
-  def registerInitialState(self, gameState):
+
+  def registerInitialState(self, gameState, maxTime):
     """
     This method handles the initial setup of the
     agent to populate useful fields (such as what team
@@ -128,85 +133,24 @@ class MCTSAgent(CaptureAgent):
     '''
     Your initialization code goes here, if you need any.
     '''
-    raise NotImplementedError 
+
+    self.MDP = MDP(gameState)
+    self.MCTS = MCTS(MDP, None, None, MCTSAgent.searchTree)
+    MCTSAgent.searchTree = self.MCTS.MCTS(self.index, maxTime)
     
   def chooseAction(self, gameState):
 
     actions = gameState.getLegalActions(self.index)
 
     '''
-    You should change this in your own agent.
+    You should change this in your own agent. Relies on self.timeforComputing
     '''
+
+    #To add: after action is taken update search tree
 
     raise NotImplementedError
   
-  def select(self):
-    raise NotImplementedError
-  
-  def MCTS(self, root, max_time) -> None:
-    '''
-    Performs Monte Carlo Tree Search update on the current gamestate
-    '''
 
-    '''
-    Pseudocode:
-    create root Node v with gameState s
-    while budget > 0:
-      v_l = Treepolicy(v_0)
-      delta = DefaultPolicy(s(v_l))
-      Backup(v_l, Delta)
-    return a(BestChild(v_0, 0))
-    '''
-    start = time.time()
-    root = TreeNode()
-    while(time.time() - start <= max_time): #budget
-      selected_node = self.select(root)
-      child_node = self.expand(selected_node)
-      value = self.simulate(child_node)
-      self.backpropagate(selected_node, child_node, value)
-
-    raise NotImplementedError
-
-
-class TreeNode():
-  '''
-  Search tree node for use in MCTS algorithm
-  '''
-
-  def __init__(self) -> None:
-    self.timesvisited = 0
-    self.children = []
-    self.expanded = False
-
-  def check_childNode(self, action) -> bool:
-    raise NotImplementedError
-  
-  def expand_childNode(self, action) -> None:
-    raise NotImplementedError
-  
-  def isLeaf(self) -> bool:
-    raise NotImplementedError
-  
-  def value(self) -> int:
-    raise NotImplementedError
-  
-  def get_timesvisited(self):
-    return self.timesvisited
-  
-  def set_timesvisited(self, n: int) -> None:
-    self.timesvisited = n
-
-  def bestChild(self, c: float):
-    '''
-    Returns the best action to take in this node. 
-    Nodes are ranked according to their UCB value
-    '''
-
-    max_val = -1
-    for child in self.children:
-      fd
-
-    raise NotImplementedError
 
   
 
